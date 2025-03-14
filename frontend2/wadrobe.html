@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0; /* Remove default body margin */
+            padding: 20px; /* Add some padding to the body */
+            background-image:url(background.jpg) ;
+        }
+
+        #todo-container {
+            width: 500px; /* Adjust width as needed */
+            background-color: #fbbb80;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: fixed; /* Fixed position for top-left */
+            top: 20px;
+            left: 20px;
+            color: #f53193;
+            
+           
+        }
+        
+        #task-input {
+            width: calc(100% - 70px);
+            padding: 10px;
+            border: 1px solid #e98484;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #add-task {
+            padding: 10px 15px;
+            background-color: #6cc3e8;
+            color: rgb(251, 241, 241);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: medium;
+            transition: width 0.7s ease,height 0.7s ease;
+        }
+        #add-task:hover{
+            background-color: #4c8f8f;
+            width: 60px;
+            height: 40px;
+            
+
+        }
+        
+
+        #task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: fixed; /* Fixed position for top-right */
+            top: 20px;
+            right: 20px;
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #f08d8d;
+            border: 1px solid #f38787;
+            border-radius: 4px;
+            transition: width 0.7s ease,height 0.7s ease;
+        }
+        #task-list:hover{
+            width: 425px;
+            height: 420px;
+           
+        }
+        
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            font-size:larger;
+            padding-left: 10px;
+            border-bottom: 1px solid #eee;
+            border-right:20px;
+            color:#1e2ff0;
+        }
+
+        .task:last-child {
+            border-bottom: none;
+        }
+
+        .task .task-text {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .task .delete-task {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 20px;
+
+        }
+
+        .task.completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .task input[type="checkbox"]{
+            margin-right: 5px;
+        }
+        #completed-tasks {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            width: 500px;
+            background-color: #b0e0e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 200px;
+        }
+
+        #completed-tasks h3 {
+            margin-top: 0;
+        }
+
+        #completed-tasks ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #completed-tasks li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #completed-tasks li:last-child {
+            border-bottom: none;
+        }
+        #incompleted-tasks {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 500px;
+            background-color: #ffe4c4;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 200px;
+        }
+
+        #incompleted-tasks h3 {
+            margin-top: 0;
+        }
+
+        #incompleted-tasks ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #incompleted-tasks li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #incompleted-tasks li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="todo-container">
+        <h2>To-Do List</h2>
+        <input type="text" id="task-input" placeholder="Add a new task...">
+        <button id="add-task">Add</button>
+    </div>
+    <ul id="task-list"></ul>
+    <div id="completed-tasks">
+        <h3>Completed Tasks</h3>
+        <ul></ul>
+        <div id="incompleted-tasks">
+            <h3>Incompleted Tasks</h3>
+            <ul></ul>
+        </div>
+    
+
+    
+
+        <script>
+            const taskInput = document.getElementById('task-input');
+            const addTaskButton = document.getElementById('add-task');
+            const taskList = document.getElementById('task-list');
+            const completedTasksList = document.querySelector('#completed-tasks ul');
+            const incompletedTasksList = document.querySelector('#incompleted-tasks ul');
+
+    
+            addTaskButton.addEventListener('click', addTask);
+    
+            function addTask() {
+                console.log("addTask function called!"); // Added console log
+                const taskText = taskInput.value.trim();
+                if (taskText !== '') {
+                    const taskItem = document.createElement('li');
+                    taskItem.classList.add('task');
+                    const checkbox = document.createElement('input');
+                     checkbox.type = 'checkbox';
+                      taskItem.appendChild(checkbox);
+    
+                    const taskTextElement = document.createElement('span');
+                    taskTextElement.classList.add('task-text');
+                    taskTextElement.textContent = taskText;
+    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-task');
+                    deleteButton.textContent = 'Delete';
+    
+                    taskItem.appendChild(taskTextElement);
+                    taskItem.appendChild(deleteButton);
+                    taskList.appendChild(taskItem);
+    
+                    taskInput.value = '';
+                    addIncompletedTask(taskText);
+                    
+                    deleteButton.addEventListener('click', () => {
+                        taskList.removeChild(taskItem);
+                        removeCompletedTask(taskText);
+                        removeIncompletedTask(taskText);
+                    });
+                    checkbox.addEventListener('change', () => {
+                    taskTextElement.classList.toggle('completed');
+                    if (checkbox.checked) {
+                        addCompletedTask(taskText);
+                        removeIncompletedTask(taskText);
+                    } else {
+                        removeCompletedTask(taskText);
+                        addIncompletedTask(taskText);
+                    }
+                });
+                }
+            }
+    
+            taskInput.addEventListener("keypress", function(event) {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                addTaskButton.click();
+              }
+            });
+
+        function addCompletedTask(taskText) {
+            const completedTaskItem = document.createElement('li');
+            completedTaskItem.textContent = taskText;
+            completedTasksList.appendChild(completedTaskItem);
+        }
+
+        function removeCompletedTask(taskText) {
+            const completedTasks = completedTasksList.querySelectorAll('li');
+            completedTasks.forEach(task => {
+                if (task.textContent === taskText) {
+                    completedTasksList.removeChild(task);
+                }
+            });
+        }
+        function addIncompletedTask(taskText) {
+            const incompletedTaskItem = document.createElement('li');
+            incompletedTaskItem.textContent = taskText;
+            incompletedTasksList.appendChild(incompletedTaskItem);
+        }
+
+        function removeIncompletedTask(taskText) {
+            const incompletedTasks = incompletedTasksList.querySelectorAll('li');
+            incompletedTasks.forEach(task => {
+                if (task.textContent === taskText) {
+                    incompletedTasksList.removeChild(task);
+                }
+            });
+        }
+    
+        </script>
+    </body>
+    </html>
